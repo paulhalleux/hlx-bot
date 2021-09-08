@@ -2,10 +2,6 @@ import Command from "./command";
 import Service, {getFilesAndFolders} from "../domain/service"
 import {Client, Message} from "discord.js";
 
-const util = require("util")
-const fs = require("fs")
-const readdir = util.promisify(fs.readdir)
-
 export default class CommandService implements Service {
 
     private readonly _commands: Command[]

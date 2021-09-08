@@ -4,7 +4,7 @@ import {commandService} from "../../index";
 
 export default {
     name: "messageCreate",
-    run: async message => {
+    run: async (message) => {
         if (message.content.startsWith('!') && !message.author.bot) {
             await commandService.execute(message, message.client, message.content)
         }

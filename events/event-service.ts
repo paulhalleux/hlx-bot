@@ -1,16 +1,30 @@
 import Service, {getFilesAndFolders} from "../domain/service";
 import {Client} from "discord.js";
+import Event from "./event";
+
+export type CustomEvent = {
+}
 
 export default class EventService implements Service{
 
     private readonly _client: Client
+    private readonly _customEvents: Event<any>[]
 
     constructor(client: Client) {
         this._client = client
+        this._customEvents = []
     }
 
     async register(): Promise<void> {
         await this.registerFolder(__dirname)
+    }
+
+    call<T extends keyof CustomEvent>(event: T, options: CustomEvent[T]) {
+        this._customEvents.forEach(e => {
+            if(e.name.equalsIgnoreCase(event)) {
+                e.run(options)
+            }
+        })
     }
 
     private async registerFolder(filePath: string) {
@@ -20,7 +34,9 @@ export default class EventService implements Service{
             try {
                 const event = require(filePath + '/' + file.replace(/\.[^/.]+$/, ""))
                 if(this.isEvent(event)) {
-                    this._client.on(event.default.name, event.default.run)
+                    if(event.default.custom) {
+                        this._customEvents.push(event.default)
+                    } else this._client.on(event.default.name, event.default.run)
                 }
             } catch (error) {
                 console.error(error)
