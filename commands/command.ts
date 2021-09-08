@@ -1,14 +1,14 @@
-import {Client, Message} from "discord.js";
+import {Client, GuildMember, Message, User} from "discord.js";
 
 export default interface Command {
     name: string
     description: string
-    execute: ({args, message, client}: CommandArguments) => void
+    execute: ({args, message, member}: CommandArguments) => void
     subcommands?: Command[]
 }
 
 export interface CommandArguments {
     args: string[]
     message: Message
-    client: Client
+    member: GuildMember
 }

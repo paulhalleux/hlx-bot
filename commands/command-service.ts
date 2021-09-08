@@ -1,6 +1,6 @@
 import Command from "./command";
 import Service, {getFilesAndFolders} from "../domain/service"
-import {Client, CommandInteraction, Interaction, Message} from "discord.js";
+import {CommandInteraction, GuildMember, Message} from "discord.js";
 import SlashCommand from "./slash-command";
 
 export default class CommandService implements Service {
@@ -17,14 +17,14 @@ export default class CommandService implements Service {
         await this.registerFolder(__dirname)
     }
 
-    async execute(message: Message, client: Client, command: string) {
+    async execute(message: Message, member: GuildMember, command: string) {
         const split: string[] = command.split(" ")
         const args: string[] = split.slice(1)
         const commandName = split[0].replace(/^!/, '')
         this._commands.forEach(cmd => {
             if(cmd.name.equalsIgnoreCase(commandName)) {
                 const [exeCommand, exeArgs] = this.getCommandToExecute(cmd, args)
-                exeCommand.execute({args: exeArgs, message, client})
+                exeCommand.execute({args: exeArgs, message, member})
             }
         })
     }

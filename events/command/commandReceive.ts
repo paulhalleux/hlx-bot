@@ -6,7 +6,7 @@ export default {
     name: "messageCreate",
     run: async (message) => {
         if (message.content.startsWith('!') && !message.author.bot) {
-            await commandService.execute(message, message.client, message.content)
+            await commandService.execute(message, message.member, message.content)
         }
     }
 } as Event<Message>
