@@ -1,21 +1,17 @@
-import CommandManager from "./commands/command-manager";
-import {Message} from "discord.js";
+import CommandService from "./commands/command-service";
 import "./extensions/strings"
+import EventService from "./events/event-service";
 
 const config = require('./config.json')
 const Discord = require('discord.js')
 const client = new Discord.Client({intents: ["GUILDS", "GUILD_MESSAGES"]});
-const commandManager = new CommandManager()
+export const commandService = new CommandService()
+export const eventService = new EventService(client)
 
 client.on('ready', async () => {
-    console.log(`[HLXBOT] Connected as ${client.user.username}`)
-    await commandManager.register()
-})
-
-client.on('messageCreate', async (args: Message) => {
-    if(args.content.startsWith('!') && !args.author.bot) {
-        await commandManager.execute(args, client, args.content)
-    }
+    console.log(`[HLXBOT] Connected as ${client.user.tag}`)
+    await commandService.register()
+    await eventService.register()
 })
 
 client.login(config.TOKEN).catch(reason => {

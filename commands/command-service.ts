@@ -1,11 +1,12 @@
 import Command from "./command";
+import Service, {getFilesAndFolders} from "../domain/service"
 import {Client, Message} from "discord.js";
 
 const util = require("util")
 const fs = require("fs")
 const readdir = util.promisify(fs.readdir)
 
-export default class CommandManager {
+export default class CommandService implements Service {
 
     private readonly _commands: Command[]
 
@@ -13,7 +14,7 @@ export default class CommandManager {
         this._commands = []
     }
 
-    async register() {
+    async register(): Promise<void> {
         await this.registerFolder(__dirname)
     }
 
@@ -36,9 +37,7 @@ export default class CommandManager {
     }
 
     private async registerFolder(filePath: string) {
-        const folderElements = await readdir(filePath);
-        const files = folderElements.filter(value => fs.lstatSync(`${filePath}/${value}`).isFile() && (value.endsWith('.ts') || value.endsWith('.js')))
-        const folders = folderElements.filter(value => fs.lstatSync(`${filePath}/${value}`).isDirectory())
+        const {files, folders} = await getFilesAndFolders(filePath);
 
         for (const file of files) {
             try {
